@@ -28,8 +28,8 @@ public class Tree<E> {
         Tree<Integer> t5 = lT.get(3);
         t2.addChild(12);
         t2.addChild(13);
-        LinkedList<Integer> recorrido = t.recorrer();
-        System.out.println(recorrido.toString());
+//        LinkedList<Integer> recorrido = t.recorrer();
+        t.recorrer();
         
         
     }
@@ -61,12 +61,13 @@ public class Tree<E> {
         root.getChilds().add(new Tree(e));
     }
     
-    public LinkedList<E> recorrer(){
+    public LinkedList<E> recorrer(OperationOnVertex operation){
         Queue<TreeNode> queue = new LinkedList<>();
         LinkedList<E> lLE = new LinkedList<>();
         queue.offer(this.root);
         while(!queue.isEmpty()){
-            TreeNode<E> tn = queue.poll();
+            TreeNode<E> tn = queue.poll();            
+            operation.op(tn.getContent()); 
             lLE.add(tn.getContent());
             for(Tree t: tn.getChilds()){
                 queue.offer(t.root);
@@ -74,5 +75,8 @@ public class Tree<E> {
         }
         return lLE;
     }
-    
+
+    public void recorrer(){
+        recorrer((o)->System.out.println(o));
+    }
 }
