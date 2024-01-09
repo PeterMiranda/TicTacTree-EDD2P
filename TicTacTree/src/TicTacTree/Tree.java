@@ -11,24 +11,30 @@ import java.util.Queue;
 public class Tree<E> {
     public static void main(String[] args) {
         Tree<Integer> t = new Tree(1);
-        t.addChild(2);
-        t.addChild(3);
-        t.addChild(4);
-        t.addChild(5);
-        List<Tree> lT = (ArrayList<Tree>) t.getChilds();
-        Tree<Integer> t2 = lT.get(0);
-        t2.addChild(6);
-        t2.addChild(7);
-        Tree<Integer> t3 = lT.get(1);
-        t2.addChild(8);
-        t2.addChild(9);
-        Tree<Integer> t4 = lT.get(2);
-        t2.addChild(10);
-        t2.addChild(11);
-        Tree<Integer> t5 = lT.get(3);
-        t2.addChild(12);
-        t2.addChild(13);
+//        t.addChild(2);
+//        t.addChild(3);
+//        t.addChild(4);
+//        t.addChild(5);
+//        List<Tree> lT = (ArrayList<Tree>) t.getChilds();
+//        Tree<Integer> t2 = lT.get(0);
+//        t2.addChild(6);
+//        t2.addChild(7);
+//        Tree<Integer> t3 = lT.get(1);
+//        t2.addChild(8);
+//        t2.addChild(9);
+//        Tree<Integer> t4 = lT.get(2);
+//        t2.addChild(10);
+//        t2.addChild(11);
+//        Tree<Integer> t5 = lT.get(3);
+//        t2.addChild(12);
+//        t2.addChild(13);
 //        LinkedList<Integer> recorrido = t.recorrer();
+        t.recorrer((a)->{
+            Tree tn = (Tree)a;
+            for(int i=0; i<9; i++){
+                tn.addChild(i+1);
+            }
+        });
         t.recorrer();
         
         
@@ -61,22 +67,20 @@ public class Tree<E> {
         root.getChilds().add(new Tree(e));
     }
     
-    public LinkedList<E> recorrer(OperationOnVertex operation){
-        Queue<TreeNode> queue = new LinkedList<>();
-        LinkedList<E> lLE = new LinkedList<>();
-        queue.offer(this.root);
+    public void recorrer(OperationOnVertex operation){
+        Queue<Tree> queue = new LinkedList<>();
+        queue.offer(this);
         while(!queue.isEmpty()){
-            TreeNode<E> tn = queue.poll();            
-            operation.op(tn.getContent()); 
-            lLE.add(tn.getContent());
+            Tree<E> tn = queue.poll();
             for(Tree t: tn.getChilds()){
-                queue.offer(t.root);
+                queue.offer(t);
             }
+            operation.op(tn); 
+            
         }
-        return lLE;
     }
 
     public void recorrer(){
-        recorrer((o)->System.out.println(o));
+        recorrer((o)->System.out.println(((Tree)o).getContent()));
     }
 }
