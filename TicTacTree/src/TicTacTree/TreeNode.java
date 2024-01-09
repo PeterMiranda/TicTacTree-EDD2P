@@ -1,11 +1,20 @@
 package TicTacTree;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class TreeNode<E> {
+/**
+ *
+ * @author CltControl
+ */
+class TreeNode<E> {
+    private E content;
+    private List<Tree> childs;
     
-    E content;
-    List<Tree> ChildrenList;
+    public TreeNode(E content) {
+        this.content = content;
+        this.childs = new ArrayList();
+    }
 
     public E getContent() {
         return content;
@@ -15,17 +24,13 @@ public class TreeNode<E> {
         this.content = content;
     }
 
-    public TreeNode(E content) {
-        this.content = content;
-        this.ChildrenList = null;
+    public List<Tree> getChilds() {
+        return childs;
     }
 
-    public List<Tree> getChildrenList() {
-        return ChildrenList;
+    public void setChilds(List<Tree> childs) {
+        this.childs = childs;
     }
-
-    public void setChildrenList(List<Tree> ChildrenList) {
-        this.ChildrenList = ChildrenList;
-    }
+    
     
 }
