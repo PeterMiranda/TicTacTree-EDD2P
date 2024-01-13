@@ -1,4 +1,4 @@
-package TicTacTree;
+package ec.edu.espol.tree;
 
 import java.util.ArrayList;
 import java.util.List;

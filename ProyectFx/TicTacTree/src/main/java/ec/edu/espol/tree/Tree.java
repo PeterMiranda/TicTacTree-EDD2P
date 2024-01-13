@@ -1,6 +1,9 @@
-package TicTacTree;
+package ec.edu.espol.tree;
 
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -11,19 +14,22 @@ import java.util.Scanner;
  * @author CltControl
  */
 public class Tree<E> {
-
+   
     public static void main(String[] args) {
-
+        
         Tree<Integer> t = new Tree(0);
         Scanner sc = new Scanner(System.in);
-        System.out.println("Ingrese su movimiento");
-        String userInput = sc.nextLine();
-        int number = Integer.parseInt(userInput);
+        
         ArrayList<Integer> al = new ArrayList<>();
-        al.add(number);
-        t.addChild(number);
-        Tree<Integer> actual = t;
-        while (al.size()<9) {
+        String winner = null;
+        ArrayList<String> moves = new ArrayList<>(Arrays.asList("v","v","v","v","v","v","v","v","v"));
+        while (al.size()<9 && winner== null) {
+            System.out.println("Ingrese su movimiento");
+            String userInput = sc.nextLine();
+            int number = Integer.parseInt(userInput);
+            al.add(number);
+            t.addChild(number);
+            Tree<Integer> actual = t;
             List<Tree> childs = actual.getChilds();
             for(Tree c: childs) {
                 if((int)c.getContent()==number){
@@ -38,11 +44,15 @@ public class Tree<E> {
                     }
                 }
             });
-            actual.recorrer();
-            System.out.println("Ingrese su movimiento");
-            userInput = sc.nextLine();
-            number = Integer.parseInt(userInput);
-            al.add(number);
+            if(al.size()%2!=0){
+                moves.set(number-1, "X");}
+            else{
+                moves.set(number-1, "O");}
+//            actual.recorrer();
+            System.out.println(al.toString());
+            System.out.println(moves.toString());
+            winner = Tree.calculateWinner(moves);
+            System.out.println("Ganó" + winner);
         }
 //        LinkedList<Integer> recorrido = t.recorrer();
 //        t.recorrer((a)->{
@@ -111,4 +121,19 @@ public class Tree<E> {
     public void recorrer() {
         recorrer((o) -> System.out.println(((Tree) o).getContent()));
     }
+    
+    public static String calculateWinner(ArrayList<String> squares) {
+        Integer[][] lines = {{0, 1, 2},{3, 4, 5},{6, 7, 8},{0, 3, 6},{1, 4, 7},{2, 5, 8},{0, 4, 8},{2, 4, 6}};
+        for (int i = 0; i < lines.length; i++) {
+          Integer[] line = lines[i];
+          int a = line[0];
+          int b = line[1];
+          int c = line[2];
+          
+          if (!squares.get(a).equals("v") && squares.get(a).equals(squares.get(b)) && squares.get(a).equals(squares.get(c))) {
+            return squares.get(a);
+          }
+        }
+        return null;
+     }
 }
