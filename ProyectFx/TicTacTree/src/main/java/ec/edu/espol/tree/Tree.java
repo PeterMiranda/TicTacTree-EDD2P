@@ -37,6 +37,10 @@ public class Tree<E> {
     public boolean isLeaf() {
         return root.getChilds().isEmpty();
     }
+    
+    public int getUtility() {
+        return root.getUtility();
+    }
 
     public boolean isEmpty() {
         return root == null;

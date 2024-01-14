@@ -18,6 +18,12 @@ public class Main {
     /**
      * @param args the command line arguments
      */
+    Integer[][] lines = {{0, 1, 2},{3, 4, 5},{6, 7, 8},{0, 3, 6},{1, 4, 7},{2, 5, 8},{0, 4, 8},{2, 4, 6}};
+    Tree<Integer> t = new Tree(0);
+    ArrayList<String> moves = new ArrayList<>(Arrays.asList("","","","","","","","",""));
+    ArrayList<Integer> al = new ArrayList<>();
+    String winner = null;
+    
     public static void main(String[] args) {
         Integer[][] lines = {{0, 1, 2},{3, 4, 5},{6, 7, 8},{0, 3, 6},{1, 4, 7},{2, 5, 8},{0, 4, 8},{2, 4, 6}};
         Tree<Integer> t = new Tree(0);
@@ -60,13 +66,47 @@ public class Main {
         }
     
         t.recorrer();
+        
+        
+    }
+    
+    public void Game(){
+        Integer[][] lines = {{0, 1, 2},{3, 4, 5},{6, 7, 8},{0, 3, 6},{1, 4, 7},{2, 5, 8},{0, 4, 8},{2, 4, 6}};
+        Tree<Integer> t = new Tree(0);
+        ArrayList<String> moves = new ArrayList<>(Arrays.asList("","","","","","","","",""));
+        ArrayList<Integer> al = new ArrayList<>();
+    }
+    
+    public void humanVsComputer(boolean botFirst){
+        int movement;
+        if(botFirst){
+            movement = getMovementBot(t, moves, lines, 0, "X");
+        }
+        while(al.size()<9 && winner== null){
+            
+        }
+    }
+    
+    public int getMovementBot(Tree<Integer> t,ArrayList<String> moves, Integer[][] lines, int ind, String user){
+        possibleChilds(t, moves, user, lines);
+        List<Tree> tChilds =  t.getChilds();
+        int indMovement = -1;
+        int maxUtility = -8;
+        for(Tree tChild: tChilds){
+            int utility =  tChild.getUtility();
+            if (utility>maxUtility){
+                maxUtility = utility;
+                indMovement = (int)tChild.getContent();
+            }
+        }
+        return indMovement;
     }
     
     public int getMinUtility(ArrayList<String> moves, Integer[][] lines, int indexAdded, String user){
         ArrayList<String> nextBoard = (ArrayList<String>) moves.clone();
         nextBoard.set(indexAdded, user);
         Integer minUtility = 8;
-        String otherUser = user.equals("X")?"O":user;
+        String otherUser = user.equals("X")?"O":"X";
         for(int i = 0; i < 9; i++){
             if(nextBoard.get(i).isBlank()){
                 nextBoard.set(i, otherUser);
@@ -78,33 +118,45 @@ public class Main {
         return minUtility;
     }
     
-    public void newChild(ArrayList<String> moves, Tree<Integer> t, Integer[][] lines, int ind, String user){
+    public void newChild(ArrayList<String> moves, Tree<Integer> t, Integer[][] lines, int ind, String user, int indNextBoard){
         if(moves.get(ind).isBlank()){
+            ArrayList<String> nextBoard = (ArrayList<String>)moves.clone();
+            nextBoard.set(ind, user);
             int utility = getMinUtility(moves, lines, ind,user);
             t.addChild(ind+1, utility);
         }
     }
     
-    public void posibleChilds(Tree<Integer> t,ArrayList<String> moves, String nextUser, Integer[][] lines){        for(int i = 0; i<3; i++){
-            newChild(moves, t, lines, i, nextUser);
+    public void possibleChilds(Tree<Integer> t,ArrayList<String> moves, String nextUser, Integer[][] lines){
+        int indNextBoard = -1;
+        for(int i = 0; i<3; i++){
+            indNextBoard++;
+            newChild(moves, t, lines, i, nextUser, indNextBoard);
         }
-        newChild(moves, t, lines, 4, nextUser);
+        indNextBoard++;
+        newChild(moves, t, lines, 4, nextUser, indNextBoard);
         if(isPrincipalSymmetrical(moves)){
             if(isSecondarySymmetrical(moves)){
                 return;
             } else {
-                newChild(moves, t, lines, 5, nextUser);
-                newChild(moves, t, lines, 8, nextUser);
+                indNextBoard++;
+                newChild(moves, t, lines, 5, nextUser, indNextBoard);
+                indNextBoard++;
+                newChild(moves, t, lines, 8, nextUser, indNextBoard);
                 return;
             }
         } else if(isSecondarySymmetrical(moves)){
-            newChild(moves, t, lines, 3, nextUser);
-            newChild(moves, t, lines, 6, nextUser);
+            indNextBoard++;
+            newChild(moves, t, lines, 3, nextUser, indNextBoard);
+            indNextBoard++;
+            newChild(moves, t, lines, 6, nextUser, indNextBoard);
             return;
         }
-        newChild(moves, t, lines, 3, nextUser);
+        indNextBoard++;
+        newChild(moves, t, lines, 3, nextUser, indNextBoard);
         for(int i = 5; i<9; i++){
-            newChild(moves, t, lines, i, nextUser);
+            indNextBoard++;
+            newChild(moves, t, lines, i, nextUser, indNextBoard);
         }
     }
     
