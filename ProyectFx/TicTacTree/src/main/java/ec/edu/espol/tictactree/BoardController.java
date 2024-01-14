@@ -1,33 +1,44 @@
 package ec.edu.espol.tictactree;
 
+import javafx.scene.Node;
+
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.input.ContextMenuEvent;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.text.Text;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.text.Font;
 
 public class BoardController implements Initializable {
 
     @FXML
-    private Text gameText1;
+    private Label gameText1;
     @FXML
-    private Text gameText2;
+    private Label gameText2;
     @FXML
-    private Text gameText3;
+    private Label gameText3;
     @FXML
-    private Text gameText4;
+    private Label gameText4;
     @FXML
-    private Text gameText5;
+    private Label gameText5;
     @FXML
-    private Text gameText6;
+    private Label gameText6;
     @FXML
-    private Text gameText7;
+    private Label gameText7;
     @FXML
-    private Text gameText8;
+    private Label gameText8;
     @FXML
-    private Text gameText9;
+    private Label gameText9;
+    @FXML
+    private GridPane mainBoard;
+    @FXML
+    private GridPane DemoGridpane1;
 
     /**
      * Initializes the controller class.
@@ -171,8 +182,83 @@ public class BoardController implements Initializable {
             allowedMovement9 = false;
         }else{
             System.out.println("MOVIMIENTO NO PERMITIDO");
+            //System.out.println(GridPaneToArrayList());
+            ArrayListToGridPane(GridPaneToArrayList(), DemoGridpane1);
         }  
     }
 
+    public ArrayList<String> GridPaneToArrayList() {
+        ArrayList<String> movementList = new ArrayList<>();
 
+        for (int i = 0; i < mainBoard.getRowCount(); i++) {
+            for (int j = 0; j < mainBoard.getColumnCount(); j++) {
+                String movement = getStringFromGridPane(mainBoard, i,j);
+                movementList.add(movement);
+            }
+        }
+        return movementList;
+    }
+ 
+    public String getStringFromGridPane(GridPane gridPane, int row, int column) {
+        for (Node node : gridPane.getChildren()) {
+            Integer rowIndex = GridPane.getRowIndex(node);
+            Integer colIndex = GridPane.getColumnIndex(node);
+            if (rowIndex == null) rowIndex = 0;
+            if (colIndex == null) colIndex = 0;
+            if (rowIndex == row && colIndex == column && node instanceof Label) {
+                return ((Label) node).getText();
+            }
+        }
+        return null;
+    }
+    
+    /* LABEL
+    public Label getLabelFromGridPane(GridPane gridPane, int row, int column) {
+        for (Node node : gridPane.getChildren()) {
+            Integer rowIndex = GridPane.getRowIndex(node);
+            Integer colIndex = GridPane.getColumnIndex(node);
+            if (rowIndex == null) rowIndex = 0;
+            if (colIndex == null) colIndex = 0;
+            if (rowIndex == row && colIndex == column && node instanceof Label) {
+                return (Label) node;
+            }
+        }
+        return null;
+    }
+    */
+    
+    public void ArrayListToGridPane(ArrayList<String> list, GridPane gridPane) {
+        ObservableList<Node> children = gridPane.getChildren();
+        for (int i = children.size() - 1; i >= 0; i--) {
+            if (children.get(i) instanceof Label) {
+                gridPane.getChildren().remove(i);
+            }
+        }
+        
+        int rows = gridPane.getRowCount();
+        int columns = gridPane.getColumnCount();
+        int index = 0;
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                if (index < list.size()) {
+                    String text = list.get(index);
+                    Label etiqueta = new Label(text);
+                    etiqueta.setFont(new Font(22));
+                    
+                    HBox hbox = new HBox(etiqueta);
+                    hbox.setAlignment(Pos.CENTER);
+                
+                    GridPane.setRowIndex(etiqueta, i);
+                    GridPane.setColumnIndex(etiqueta, j);
+                    gridPane.getChildren().add(etiqueta);
+                    index++;
+                } else {
+                    break;
+                }
+            }
+        }
+    }
+    
+    
 }
