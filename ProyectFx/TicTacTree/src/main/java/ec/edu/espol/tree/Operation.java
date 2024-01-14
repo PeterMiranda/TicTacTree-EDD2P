@@ -1,5 +1,5 @@
 package ec.edu.espol.tree;
 
-public interface OperationOnVertex {
+public interface Operation {
     public void op(Object o);
 }
