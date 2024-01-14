@@ -56,7 +56,7 @@ public class Main {
             System.out.println(al.toString());
             System.out.println(moves.toString());
             winner = calculateWinner(moves, lines);
-            System.out.println("Ganó" + winner);
+            System.out.println("Ganó " + winner);
         }
     
         t.recorrer();
