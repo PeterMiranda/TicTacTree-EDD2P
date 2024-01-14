@@ -4,7 +4,10 @@ import javafx.scene.Node;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -17,6 +20,8 @@ import javafx.scene.text.Font;
 
 public class BoardController implements Initializable {
 
+    @FXML
+    private Label gameText0;
     @FXML
     private Label gameText1;
     @FXML
@@ -34,11 +39,27 @@ public class BoardController implements Initializable {
     @FXML
     private Label gameText8;
     @FXML
-    private Label gameText9;
-    @FXML
     private GridPane mainBoard;
     @FXML
+    private GridPane DemotrationGridpane;
+    @FXML
     private GridPane DemoGridpane1;
+    @FXML
+    private GridPane DemoGridpane2;
+    @FXML
+    private GridPane DemoGridpane3;
+    @FXML
+    private GridPane DemoGridpane4;
+    @FXML
+    private GridPane DemoGridpane5;
+    @FXML
+    private GridPane DemoGridpane6;
+    @FXML
+    private GridPane DemoGridpane7;
+    @FXML
+    private GridPane DemoGridpane8;
+    @FXML
+    private GridPane DemoGridpane9;
 
     /**
      * Initializes the controller class.
@@ -49,147 +70,36 @@ public class BoardController implements Initializable {
     }    
 
     int countMovement = 0;
-    
-   private String setSymbol(int countMovement){
-        if (countMovement % 2 == 0) {
-            return "O";
-        } else {
-            return "X";
-        }
-    }
-   
-    boolean allowedMovement1 = true;
+       
     @FXML
-    private void setPos1(MouseEvent event) {
-        if(allowedMovement1){
+    private void setPos(MouseEvent event) {
+        Label l = (Label)event.getSource();
+        
+        if(l.getText().equals("")){
+            l.setText("O");
             countMovement++;
-            System.out.println("Pos1");
-            gameText1.setText(setSymbol(countMovement));
-            // LLAMADA FUNCION
-            allowedMovement1 = false;
+            System.out.println("Pos0");
+            System.out.println(GridPaneToArrayList());
         }else{
             System.out.println("MOVIMIENTO NO PERMITIDO");
         }   
     }
 
-    boolean allowedMovement2 = true;
-    @FXML
-    private void setPos2(MouseEvent event) {
-        if(allowedMovement2){
-            countMovement++;
-            System.out.println("Pos2");
-            gameText2.setText(setSymbol(countMovement));
-            // LLAMADA FUNCION
-            allowedMovement2 = false;
-        }else{
-            System.out.println("MOVIMIENTO NO PERMITIDO");
-        }          
-    }
-
-    boolean allowedMovement3 = true;
-    @FXML
-    private void setPos3(MouseEvent event) {
-        if(allowedMovement3){
-            countMovement++;
-            System.out.println("Pos3");
-            gameText3.setText(setSymbol(countMovement));
-            // LLAMADA FUNCION
-            allowedMovement3 = false;
-        }else{
-            System.out.println("MOVIMIENTO NO PERMITIDO");
-        }           
-    }
-
-    boolean allowedMovement4 = true;
-    @FXML
-    private void setPos4(MouseEvent event) {
-        if(allowedMovement4){
-            countMovement++;
-            System.out.println("Pos4");
-            gameText4.setText(setSymbol(countMovement));
-            // LLAMADA FUNCION
-            allowedMovement4 = false;
-        }else{
-            System.out.println("MOVIMIENTO NO PERMITIDO");
-        }   
-    }
-
-    boolean allowedMovement5 = true;
-    @FXML
-    private void setPos5(MouseEvent event) {
-        if(allowedMovement5){
-            countMovement++;
-            System.out.println("Pos5");
-            gameText5.setText(setSymbol(countMovement));
-            // LLAMADA FUNCION
-            allowedMovement5 = false;
-        }else{
-            System.out.println("MOVIMIENTO NO PERMITIDO");
-        }   
-    }
-
-    boolean allowedMovement6 = true;
-    @FXML
-    private void setPos6(MouseEvent event) {
-        if(allowedMovement6){
-            countMovement++;
-            System.out.println("Pos6");
-            gameText6.setText(setSymbol(countMovement));
-            // LLAMADA FUNCION
-            allowedMovement6 = false;
-        }else{
-            System.out.println("MOVIMIENTO NO PERMITIDO");
-        }   
-    }
-
-    boolean allowedMovement7 = true;
-    @FXML
-    private void setPos7(MouseEvent event) {
-        if(allowedMovement7){
-            countMovement++;
-            System.out.println("Pos7");
-            gameText7.setText(setSymbol(countMovement));
-            // LLAMADA FUNCION
-            allowedMovement7 = false;
-        }else{
-            System.out.println("MOVIMIENTO NO PERMITIDO");
-        }   
-    }
-
-    boolean allowedMovement8 = true;
-    @FXML
-    private void setPos8(MouseEvent event) {
-        if(allowedMovement8){
-            countMovement++;
-            System.out.println("Pos8");
-            gameText8.setText(setSymbol(countMovement));
-            // LLAMADA FUNCION
-            allowedMovement8 = false;
-        }else{
-            System.out.println("MOVIMIENTO NO PERMITIDO");
-        }   
-    }
-
-    boolean allowedMovement9 = true;
-
-    @FXML
-    private void setPos9(MouseEvent event) {
-        if(allowedMovement9){
-            countMovement++;
-            System.out.println("Pos9");
-            gameText9.setText(setSymbol(countMovement));
-            // LLAMADA FUNCION
-            allowedMovement9 = false;
-        }else{
-            System.out.println("MOVIMIENTO NO PERMITIDO");
-            //System.out.println(GridPaneToArrayList());
-            ArrayListToGridPane(GridPaneToArrayList(), DemoGridpane1);
-        }  
-    }
-
+    /*
+           System.out.println(GridPaneToArrayList());
+            
+            //DEMOS EN GRIDPANE IN GRIDPANE
+            Node node = DemotrationGridpane.getChildren().get(8);
+            if (node instanceof GridPane) {
+                GridPane indexGridPane = (GridPane) node;
+                ArrayListToGridPane(GridPaneToArrayList(), indexGridPane);
+            } else {
+                System.out.println("El nodo en la posición 0,0 no es un GridPane");
+            }
+    */
+         
     public ArrayList<String> GridPaneToArrayList() {
-        ArrayList<String> movementList = new ArrayList<>();
-
+        ArrayList<String> movementList =  new ArrayList();
         for (int i = 0; i < mainBoard.getRowCount(); i++) {
             for (int j = 0; j < mainBoard.getColumnCount(); j++) {
                 String movement = getStringFromGridPane(mainBoard, i,j);
@@ -211,21 +121,6 @@ public class BoardController implements Initializable {
         }
         return null;
     }
-    
-    /* LABEL
-    public Label getLabelFromGridPane(GridPane gridPane, int row, int column) {
-        for (Node node : gridPane.getChildren()) {
-            Integer rowIndex = GridPane.getRowIndex(node);
-            Integer colIndex = GridPane.getColumnIndex(node);
-            if (rowIndex == null) rowIndex = 0;
-            if (colIndex == null) colIndex = 0;
-            if (rowIndex == row && colIndex == column && node instanceof Label) {
-                return (Label) node;
-            }
-        }
-        return null;
-    }
-    */
     
     public void ArrayListToGridPane(ArrayList<String> list, GridPane gridPane) {
         ObservableList<Node> children = gridPane.getChildren();
@@ -259,6 +154,6 @@ public class BoardController implements Initializable {
             }
         }
     }
-    
-    
+
+
 }
