@@ -4,14 +4,16 @@ import javafx.scene.Node;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
@@ -67,6 +69,7 @@ public class BoardController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
+        showAlert();
     }    
 
     int countMovement = 0;
@@ -155,5 +158,20 @@ public class BoardController implements Initializable {
         }
     }
 
+    public void showAlert() {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("¿Quién inicia la Partida?");
+        alert.setContentText("¿Quién deseas que inicie la Partida?");
 
+        ButtonType buttonTypeCPU = new ButtonType("CPU", ButtonData.YES);
+        ButtonType buttonTypeHUMAN = new ButtonType("HUMAN", ButtonData.NO);
+
+        alert.getButtonTypes().setAll(buttonTypeCPU, buttonTypeHUMAN);
+
+        alert.showAndWait();
+        
+        alert.getDialogPane().lookupButton(buttonTypeCPU).setId("botonCPU");
+        alert.getDialogPane().lookupButton(buttonTypeHUMAN).setId("botonHuman");
+    }
+    
 }
