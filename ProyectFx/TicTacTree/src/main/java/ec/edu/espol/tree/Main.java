@@ -124,6 +124,7 @@ public class Main {
             nextBoard.set(ind, user);
             int utility = getMinUtility(moves, lines, ind,user);
             t.addChild(ind+1, utility);
+            //Añadir funcion que setee el posible resultado en el gridPane
         }
     }
     
