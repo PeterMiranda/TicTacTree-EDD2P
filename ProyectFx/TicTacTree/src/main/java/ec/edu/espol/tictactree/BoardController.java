@@ -98,24 +98,27 @@ public class BoardController implements Initializable {
             System.out.println("MOVIMIENTO NO PERMITIDO");
         }
         user = (al.size()%2==0)?"X":"O";
+        System.out.println(moves);
+        System.out.println(user);
+        System.out.println(al);
         lastIndex = getMovementBot(t, moves, lines, user);
+        System.out.println(lastIndex+ " aaaaaaaaaa");
         moves.set(lastIndex, user);
         al.add(lastIndex);
+        ((Label)mainBoard.getChildren().get(lastIndex)).setText(user);
         
     }
 
-//           System.out.println(GridPaneToArrayList());
-        public void setPossibleMovement(int ind, ArrayList<String> moves){
-            //DEMOS EN GRIDPANE IN GRIDPANE
-            Node node = DemotrationGridpane.getChildren().get(ind);
-            System.out.println(node.toString());
-            if (node instanceof GridPane) {
-                GridPane indexGridPane = (GridPane) node;
-                ArrayListToGridPane(moves, indexGridPane);
-            } else {
-                System.out.println("El nodo en la posición 0,0 no es un GridPane");
-            }
+    public void setPossibleMovement(int ind, ArrayList<String> moves){
+        //DEMOS EN GRIDPANE IN GRIDPANE
+        Node node = DemotrationGridpane.getChildren().get(ind);
+        if (node instanceof GridPane) {
+            GridPane indexGridPane = (GridPane) node;
+            ArrayListToGridPane(moves, indexGridPane);
+        } else {
+            System.out.println("El nodo en la posición 0,0 no es un GridPane");
         }
+    }
             
          
     public ArrayList<String> GridPaneToArrayList() {
@@ -144,63 +147,17 @@ public class BoardController implements Initializable {
     
     public void ArrayListToGridPane(ArrayList<String> list, GridPane gridPane) {
         ObservableList<Node> children = gridPane.getChildren();
-//        System.out.println(children.toString());
-        for (int i = 0; i < children.size(); i++) {
-            System.out.println(children.get(i).getProperties().toString());
-                
+        for (int i = 0; i < 9; i++) {
+            ((Label)children.get(i)).setText(list.get(i)); 
         }
-//        System.out.println(children.toString());
-//            l.setText(list.get(i));
-
-//        System.out.println(children.toString());
-        
-//        int rows = gridPane.getRowCount();
-//        int columns = gridPane.getColumnCount();
-//        int index = 0;
-//
-//        for (int i = 0; i < rows; i++) {
-//            for (int j = 0; j < columns; j++) {
-//                if (index < list.size()) {
-//                    String text = list.get(index);
-//                    Label etiqueta = new Label(text);
-//                    etiqueta.setFont(new Font(22));
-//                    
-//                    HBox hbox = new HBox(etiqueta);
-//                    hbox.setAlignment(Pos.CENTER);
-//                
-//                    GridPane.setRowIndex(etiqueta, i);
-//                    GridPane.setColumnIndex(etiqueta, j);
-//                    gridPane.getChildren().add(etiqueta);
-//                    index++;
-//                } else {
-//                    break;
-//                }
-//            }
-//        }
     }
-    
-//    public void Game(){
-//        Integer[][] lines = {{0, 1, 2},{3, 4, 5},{6, 7, 8},{0, 3, 6},{1, 4, 7},{2, 5, 8},{0, 4, 8},{2, 4, 6}};
-//        Tree<Integer> t = new Tree(0);
-//        ArrayList<String> moves = new ArrayList<>(Arrays.asList("","","","","","","","",""));
-//        ArrayList<Integer> al = new ArrayList<>();
-//    }
-    
-//    public void humanVsComputer(boolean botFirst){
-//        int movement;
-//        if(botFirst){
-//            movement = getMovementBot(t, moves, lines, 0, "X");
-//        }
-//        while(al.size()<9 && winner== null){
-//            
-//        }
-//    }
     
     public void humanMovement(int ind){
         moves.set(ind, user);
         al.add(ind);
         t.addChild(ind+1);
-        
+        List<Tree> lTree = t.getChilds();
+        t = lTree.get(lTree.size()-1);
     }
     
     public int getMovementBot(Tree<Integer> t,ArrayList<String> moves, Integer[][] lines, String user){
@@ -212,7 +169,8 @@ public class BoardController implements Initializable {
             int utility =  tChild.getUtility();
             if (utility>maxUtility){
                 maxUtility = utility;
-                indMovement = (int)tChild.getContent();
+                indMovement = (int)tChild.getContent()-1;
+                this.t = tChild;
             }
         }
         return indMovement;
@@ -234,46 +192,59 @@ public class BoardController implements Initializable {
         return minUtility;
     }
     
-    public void newChild(ArrayList<String> moves, Tree<Integer> t, Integer[][] lines, int ind, String user, int indNextBoard){
+    public boolean newChild(ArrayList<String> moves, Tree<Integer> t, Integer[][] lines, int ind, String user, int indNextBoard){
         if(moves.get(ind).isBlank()){
             ArrayList<String> nextBoard = (ArrayList<String>)moves.clone();
             nextBoard.set(ind, user);
             int utility = getMinUtility(moves, lines, ind,user);
             t.addChild(ind+1, utility);
-            setPossibleMovement(ind, nextBoard);
+            setPossibleMovement(indNextBoard, nextBoard);
+            return true;
+        }
+        return false;
+    }
+    
+    public void clearPossibleChilds(){
+        for(Node n: DemotrationGridpane.getChildren()){
+            GridPane gp = (GridPane) n;
+            for(Node n2: gp.getChildren()){
+                if(n2 instanceof Label)
+                    ((Label)n2).setText("");
+            }
         }
     }
     
     public void possibleChilds(Tree<Integer> t,ArrayList<String> moves, String nextUser, Integer[][] lines){
-        int indNextBoard = -1;
+        clearPossibleChilds();
+        int indNextBoard = 0;
+        boolean added = false;
         for(int i = 0; i<3; i++){
-            indNextBoard++;
-            newChild(moves, t, lines, i, nextUser, indNextBoard);
+            added = newChild(moves, t, lines, i, nextUser, indNextBoard);
+            indNextBoard += (added)?1:0;
+
         }
-        indNextBoard++;
-        newChild(moves, t, lines, 4, nextUser, indNextBoard);
+        added = newChild(moves, t, lines, 4, nextUser, indNextBoard);
+        indNextBoard += (added)?1:0;
         if(isPrincipalSymmetrical(moves)){
             if(isSecondarySymmetrical(moves)){
                 return;
             } else {
-                indNextBoard++;
-                newChild(moves, t, lines, 5, nextUser, indNextBoard);
-                indNextBoard++;
+                added = newChild(moves, t, lines, 5, nextUser, indNextBoard);
+                indNextBoard += (added)?1:0;
                 newChild(moves, t, lines, 8, nextUser, indNextBoard);
                 return;
             }
         } else if(isSecondarySymmetrical(moves)){
-            indNextBoard++;
-            newChild(moves, t, lines, 3, nextUser, indNextBoard);
-            indNextBoard++;
+            added = newChild(moves, t, lines, 3, nextUser, indNextBoard);
+            indNextBoard += (added)?1:0;
             newChild(moves, t, lines, 6, nextUser, indNextBoard);
             return;
         }
-        indNextBoard++;
-        newChild(moves, t, lines, 3, nextUser, indNextBoard);
+        added = newChild(moves, t, lines, 3, nextUser, indNextBoard);
+        indNextBoard += (added)?1:0;
         for(int i = 5; i<9; i++){
-            indNextBoard++;
-            newChild(moves, t, lines, i, nextUser, indNextBoard);
+            added = newChild(moves, t, lines, i, nextUser, indNextBoard);
+            indNextBoard += (added)?1:0;
         }
     }
     
