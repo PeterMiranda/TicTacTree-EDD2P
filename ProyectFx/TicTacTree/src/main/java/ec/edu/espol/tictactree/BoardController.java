@@ -38,9 +38,9 @@ public class BoardController implements Initializable {
     @FXML
     private Text userState;
     
-    private Integer[][] lines = {{0, 1, 2},{3, 4, 5},{6, 7, 8},{0, 3, 6},{1, 4, 7},{2, 5, 8},{0, 4, 8},{2, 4, 6}};
+    private final Integer[][] lines = {{0, 1, 2},{3, 4, 5},{6, 7, 8},{0, 3, 6},{1, 4, 7},{2, 5, 8},{0, 4, 8},{2, 4, 6}};
     private Tree<Integer> t;
-    private ArrayList<String> moves;
+    private ArrayList<String> moves; 
     private ArrayList<Integer> al;
     private String user;
     private boolean botMove;
@@ -105,7 +105,6 @@ public class BoardController implements Initializable {
         user = (al.size()%2==0)?"X":"O";
         System.out.println(moves);
         System.out.println(user);
-        System.out.println(al);
         int lastIndex = getMovementBot(t, moves, lines, user);
 
         setDataMove(lastIndex);
@@ -344,12 +343,12 @@ public class BoardController implements Initializable {
                 movements.setDisable(true);
                 alertWinner(won);
                 return;
-            }else if(al.size() == 9){
-                textState.setText("DRAW");
-                movements.setDisable(true);
-                alertWinner(won);
-                return;
             }
+        }
+        if(al.size() == 9){
+            textState.setText("DRAW");
+            movements.setDisable(true);
+            alertWinner(won);
         }
     }
 
