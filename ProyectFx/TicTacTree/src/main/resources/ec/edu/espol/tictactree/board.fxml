@@ -75,12 +75,12 @@
                   </Label>
                </children>
             </GridPane>
-            <Text fx:id="textState" layoutX="185.0" layoutY="45.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Turno: ">
+            <Text fx:id="textState" layoutX="130.0" layoutY="91.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Turn:">
                <font>
-                  <Font name="System Bold" size="15.0" />
+                  <Font name="System Bold" size="18.0" />
                </font>
             </Text>
-            <Text fx:id="userState" layoutX="253.0" layoutY="45.0" strokeType="OUTSIDE" strokeWidth="0.0" text="X">
+            <Text fx:id="userState" layoutX="197.0" layoutY="91.0" strokeType="OUTSIDE" strokeWidth="0.0" text="X">
                <font>
                   <Font size="15.0" />
                </font>

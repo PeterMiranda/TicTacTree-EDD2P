@@ -39,20 +39,24 @@ public class BoardController implements Initializable {
     private Text userState;
     
     private Integer[][] lines = {{0, 1, 2},{3, 4, 5},{6, 7, 8},{0, 3, 6},{1, 4, 7},{2, 5, 8},{0, 4, 8},{2, 4, 6}};
-    private Tree<Integer> t = new Tree(0);
-    private ArrayList<String> moves = new ArrayList<>(Arrays.asList("","","","","","","","",""));
-    private ArrayList<Integer> al = new ArrayList<>();
-    private String user = "";
-    private int lastIndex = -1;
-    private boolean botMove = true;
-    private boolean humanMove = true;
-    private boolean won = false;
+    private Tree<Integer> t;
+    private ArrayList<String> moves;
+    private ArrayList<Integer> al;
+    private String user;
+    private boolean botMove;
+    private boolean humanMove;
+    private boolean won;
 
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        initialize();
+    }
+    
+    public void initialize(){
+        initializeData();
         alertGameMode();
         if(humanMove && botMove){
             alertBotOrHuman();
@@ -64,11 +68,19 @@ public class BoardController implements Initializable {
             if(!humanMove)
             setHumanDisable();
         });
-    }    
-
-    int countMovement = 0;
-    int countMovementBot = 0;
-       
+    }
+    
+    public void initializeData(){
+        t = new Tree(0);
+        moves = new ArrayList<>(Arrays.asList("","","","","","","","",""));
+        al = new ArrayList<>();
+        user = "";
+        botMove = true;
+        humanMove = true;
+        won = false;
+        textState.setText("Turn:");
+    }
+    
     @FXML
     private void setPos(MouseEvent event) {
         if(humanMove){
@@ -94,14 +106,13 @@ public class BoardController implements Initializable {
         System.out.println(moves);
         System.out.println(user);
         System.out.println(al);
-        lastIndex = getMovementBot(t, moves, lines, user);
-        System.out.println(lastIndex+ " aaaaaaaaaa");
+        int lastIndex = getMovementBot(t, moves, lines, user);
+
         setDataMove(lastIndex);
         ((Label)mainBoard.getChildren().get(lastIndex)).setText(user);
         calculateWinner(moves, lines);
         if(won) return;
         userState.setText((al.size()%2==0)?"X":"O");
-        countMovementBot++;
     }
     
     public void setDataTree(int ind){
@@ -123,7 +134,6 @@ public class BoardController implements Initializable {
         l.setText(user);
         setDataMove(ind);
         setDataTree(ind);
-        countMovement++;
         l.setOnMouseClicked(null);
         calculateWinner(moves, lines);
         if(won) return;
@@ -327,8 +337,6 @@ public class BoardController implements Initializable {
             int b = line[1];
             int c = line[2];
             
-            System.out.println("USER MOVE COUNT: "+countMovement);
-            System.out.println("BOT MOVE COUNT: "+countMovementBot);
             if (!moves.get(a).isBlank() && moves.get(a).equals(moves.get(b)) && moves.get(a).equals(moves.get(c))) {
                 won = true;
                 textState.setText("Winner:");
@@ -336,7 +344,7 @@ public class BoardController implements Initializable {
                 movements.setDisable(true);
                 alertWinner(won);
                 return;
-            }else if(countMovement+countMovementBot == 9){
+            }else if(al.size() == 9){
                 textState.setText("DRAW");
                 movements.setDisable(true);
                 alertWinner(won);
@@ -349,7 +357,7 @@ public class BoardController implements Initializable {
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle("TIC-TAC-TREE");
         alert.setHeaderText(null);
-        alert.setContentText("First move");
+        alert.setContentText("First move.");
 
         ButtonType buttonTypeCPU = new ButtonType("CPU", ButtonData.YES);
         ButtonType buttonTypeHUMAN = new ButtonType("HUMAN", ButtonData.NO);
@@ -359,6 +367,9 @@ public class BoardController implements Initializable {
         Optional<ButtonType> result = alert.showAndWait();
         
         botMove = result.isPresent() && result.get() == buttonTypeCPU;
+        
+        
+        
     }
     
     public void alertGameMode() {
@@ -369,19 +380,22 @@ public class BoardController implements Initializable {
         ButtonType buttonTypeHvC = new ButtonType("HUMAN VS CPU", ButtonData.YES);
         ButtonType buttonTypeHvH = new ButtonType("HUMAN VS HUMAN", ButtonData.YES);
         ButtonType buttonTypeCvC = new ButtonType("CPU VS CPU", ButtonData.YES);
-        ButtonType buttonTypeClose = new ButtonType("CLOSE", ButtonData.NO);
+        ButtonType buttonTypeClose = new ButtonType("QUIT GAME", ButtonData.NO);
 
         alert.getButtonTypes().setAll(buttonTypeHvC, buttonTypeHvH, buttonTypeCvC, buttonTypeClose);
         
         Optional<ButtonType> result = alert.showAndWait();
         
-        botMove = result.isPresent() && (result.get() == buttonTypeHvC || result.get() == buttonTypeCvC);
-        humanMove = result.isPresent() && (result.get() == buttonTypeHvC || result.get() == buttonTypeHvH);
-        if(!humanMove){
-            movements.setText("Next bot move");
-            countMovementBot++;
-        }
-        
+        if(result.get().getButtonData() == ButtonData.YES){
+            botMove = result.isPresent() && (result.get() == buttonTypeHvC || result.get() == buttonTypeCvC);
+            humanMove = result.isPresent() && (result.get() == buttonTypeHvC || result.get() == buttonTypeHvH);
+            if(!humanMove){
+                movements.setText("Next bot move");
+            }
+        }else{
+            Platform.exit();
+            System.exit(0);
+        }  
     }
 
     @FXML
@@ -408,16 +422,21 @@ public class BoardController implements Initializable {
         }
 
         ButtonType buttonTypeRetry = new ButtonType("Retry", ButtonData.YES);
-        ButtonType buttonTypeQuit = new ButtonType("Quit", ButtonData.NO);
+        ButtonType buttonTypeQuit = new ButtonType("Quit Game :(", ButtonData.NO);
 
         alert.getButtonTypes().setAll(buttonTypeRetry, buttonTypeQuit);
         
         Optional<ButtonType> result = alert.showAndWait();
        
-        if(result.get() == buttonTypeRetry){
-            resetGame();
+        if (result.get() == buttonTypeRetry) {
+           resetGame();
+        } else if(result.get() == buttonTypeQuit){
+                Platform.exit();
+                System.exit(0);
+        } else {
+            Platform.exit();
+            System.exit(0);
         }
-        
     }
 
     public void resetGame(){
@@ -428,30 +447,7 @@ public class BoardController implements Initializable {
                 l.setOnMouseClicked(this::setPos);
             }
         }
-
         clearPossibleChilds();
-        moves = new ArrayList<>(Arrays.asList("", "", "", "", "", "", "", "", ""));
-        al.clear();
-        user = "";
-        lastIndex = -1;
-        won = false;
-        countMovement = 0;
-        countMovementBot = 0;
-        movements.setDisable(false);
-
-        t = new Tree<>(0);
-        
-        alertGameMode();
-        if (humanMove && botMove) {
-            alertBotOrHuman();
-            if (botMove) botMovement();
-
-            botMove = true;
-        }
-
-        Platform.runLater(() -> {
-            if (!humanMove)
-                setHumanDisable();
-        });
+        initialize();
     }
 }
