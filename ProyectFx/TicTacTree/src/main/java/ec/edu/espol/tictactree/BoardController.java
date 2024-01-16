@@ -439,6 +439,8 @@ public class BoardController implements Initializable {
     }
 
     public void resetGame(){
+        movements.setText("Show User Possible Movements");
+        movements.setDisable(false);
         for (Node n : mainBoard.getChildren()) {
             if (n instanceof Label) {
                 Label l = (Label) n;

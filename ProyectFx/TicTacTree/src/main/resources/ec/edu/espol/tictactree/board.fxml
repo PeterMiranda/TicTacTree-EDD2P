@@ -747,7 +747,7 @@
                   </VBox>
                </children>
             </GridPane>
-            <Button fx:id="movements" layoutX="364.0" layoutY="471.0" mnemonicParsing="false" onAction="#next" text="Show Possible Movements" />
+            <Button fx:id="movements" alignment="CENTER" layoutX="472.0" layoutY="484.0" mnemonicParsing="false" onAction="#next" text="Show User Possible Movements" textAlignment="CENTER" />
          </children>
       </Pane>
    </top>
