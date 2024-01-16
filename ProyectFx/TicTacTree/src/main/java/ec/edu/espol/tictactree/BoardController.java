@@ -12,10 +12,8 @@ import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -24,9 +22,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 public class BoardController implements Initializable {
@@ -35,6 +31,12 @@ public class BoardController implements Initializable {
     private GridPane mainBoard;
     @FXML
     private GridPane DemotrationGridpane;
+    @FXML
+    private Button movements;
+    @FXML
+    private Text textState;
+    @FXML
+    private Text userState;
     
     private Integer[][] lines = {{0, 1, 2},{3, 4, 5},{6, 7, 8},{0, 3, 6},{1, 4, 7},{2, 5, 8},{0, 4, 8},{2, 4, 6}};
     private Tree<Integer> t = new Tree(0);
@@ -45,18 +47,12 @@ public class BoardController implements Initializable {
     private boolean botMove = true;
     private boolean humanMove = true;
     private boolean won = false;
-    @FXML
-    private Button movements;
-    @FXML
-    private Text textState;
-    @FXML
-    private Text userState;
+
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
         alertGameMode();
         if(humanMove && botMove){
             alertBotOrHuman();
@@ -68,10 +64,10 @@ public class BoardController implements Initializable {
             if(!humanMove)
             setHumanDisable();
         });
-
     }    
 
     int countMovement = 0;
+    int countMovementBot = 0;
        
     @FXML
     private void setPos(MouseEvent event) {
@@ -105,6 +101,7 @@ public class BoardController implements Initializable {
         calculateWinner(moves, lines);
         if(won) return;
         userState.setText((al.size()%2==0)?"X":"O");
+        countMovementBot++;
     }
     
     public void setDataTree(int ind){
@@ -330,10 +327,19 @@ public class BoardController implements Initializable {
             int b = line[1];
             int c = line[2];
             
+            System.out.println("USER MOVE COUNT: "+countMovement);
+            System.out.println("BOT MOVE COUNT: "+countMovementBot);
             if (!moves.get(a).isBlank() && moves.get(a).equals(moves.get(b)) && moves.get(a).equals(moves.get(c))) {
                 won = true;
                 textState.setText("Winner:");
                 movements.setOnMouseClicked(null);
+                movements.setDisable(true);
+                alertWinner(won);
+                return;
+            }else if(countMovement+countMovementBot == 9){
+                textState.setText("DRAW");
+                movements.setDisable(true);
+                alertWinner(won);
                 return;
             }
         }
@@ -341,8 +347,9 @@ public class BoardController implements Initializable {
 
     public void alertBotOrHuman() {
         Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("¿Quién inicia la Partida?");
-        alert.setContentText("¿Quién deseas que inicie la Partida?");
+        alert.setTitle("TIC-TAC-TREE");
+        alert.setHeaderText(null);
+        alert.setContentText("First move");
 
         ButtonType buttonTypeCPU = new ButtonType("CPU", ButtonData.YES);
         ButtonType buttonTypeHUMAN = new ButtonType("HUMAN", ButtonData.NO);
@@ -356,7 +363,8 @@ public class BoardController implements Initializable {
     
     public void alertGameMode() {
         Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("Game Mode");
+        alert.setTitle("TIC-TAC-TREE");
+        alert.setHeaderText("Select Game Mode");
 
         ButtonType buttonTypeHvC = new ButtonType("HUMAN VS CPU", ButtonData.YES);
         ButtonType buttonTypeHvH = new ButtonType("HUMAN VS HUMAN", ButtonData.YES);
@@ -364,14 +372,16 @@ public class BoardController implements Initializable {
         ButtonType buttonTypeClose = new ButtonType("CLOSE", ButtonData.NO);
 
         alert.getButtonTypes().setAll(buttonTypeHvC, buttonTypeHvH, buttonTypeCvC, buttonTypeClose);
-        alert.setHeaderText("Select Game Mode");
+        
         Optional<ButtonType> result = alert.showAndWait();
         
         botMove = result.isPresent() && (result.get() == buttonTypeHvC || result.get() == buttonTypeCvC);
         humanMove = result.isPresent() && (result.get() == buttonTypeHvC || result.get() == buttonTypeHvH);
         if(!humanMove){
             movements.setText("Next bot move");
+            countMovementBot++;
         }
+        
     }
 
     @FXML
@@ -384,5 +394,64 @@ public class BoardController implements Initializable {
         botMovement();
         if(al.size()==9) movements.setOnMouseClicked(null); 
     }
-    
+ 
+    public void alertWinner(boolean won) {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("TIC-TAC-TREE");
+        alert.setHeaderText(null);
+        
+        if(won){
+            String winner = userState.getText();
+            alert.setContentText("WINNER: "+ winner);
+        } else{
+            alert.setContentText("DRAW ");
+        }
+
+        ButtonType buttonTypeRetry = new ButtonType("Retry", ButtonData.YES);
+        ButtonType buttonTypeQuit = new ButtonType("Quit", ButtonData.NO);
+
+        alert.getButtonTypes().setAll(buttonTypeRetry, buttonTypeQuit);
+        
+        Optional<ButtonType> result = alert.showAndWait();
+       
+        if(result.get() == buttonTypeRetry){
+            resetGame();
+        }
+        
+    }
+
+    public void resetGame(){
+        for (Node n : mainBoard.getChildren()) {
+            if (n instanceof Label) {
+                Label l = (Label) n;
+                l.setText("");
+                l.setOnMouseClicked(this::setPos);
+            }
+        }
+
+        clearPossibleChilds();
+        moves = new ArrayList<>(Arrays.asList("", "", "", "", "", "", "", "", ""));
+        al.clear();
+        user = "";
+        lastIndex = -1;
+        won = false;
+        countMovement = 0;
+        countMovementBot = 0;
+        movements.setDisable(false);
+
+        t = new Tree<>(0);
+        
+        alertGameMode();
+        if (humanMove && botMove) {
+            alertBotOrHuman();
+            if (botMove) botMovement();
+
+            botMove = true;
+        }
+
+        Platform.runLater(() -> {
+            if (!humanMove)
+                setHumanDisable();
+        });
+    }
 }
