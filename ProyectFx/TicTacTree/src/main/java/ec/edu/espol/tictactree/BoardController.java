@@ -32,45 +32,9 @@ import javafx.scene.text.Text;
 public class BoardController implements Initializable {
 
     @FXML
-    private Label gameText0;
-    @FXML
-    private Label gameText1;
-    @FXML
-    private Label gameText2;
-    @FXML
-    private Label gameText3;
-    @FXML
-    private Label gameText4;
-    @FXML
-    private Label gameText5;
-    @FXML
-    private Label gameText6;
-    @FXML
-    private Label gameText7;
-    @FXML
-    private Label gameText8;
-    @FXML
     private GridPane mainBoard;
     @FXML
     private GridPane DemotrationGridpane;
-    @FXML
-    private GridPane DemoGridpane1;
-    @FXML
-    private GridPane DemoGridpane2;
-    @FXML
-    private GridPane DemoGridpane3;
-    @FXML
-    private GridPane DemoGridpane4;
-    @FXML
-    private GridPane DemoGridpane5;
-    @FXML
-    private GridPane DemoGridpane6;
-    @FXML
-    private GridPane DemoGridpane7;
-    @FXML
-    private GridPane DemoGridpane8;
-    @FXML
-    private GridPane DemoGridpane9;
     
     private Integer[][] lines = {{0, 1, 2},{3, 4, 5},{6, 7, 8},{0, 3, 6},{1, 4, 7},{2, 5, 8},{0, 4, 8},{2, 4, 6}};
     private Tree<Integer> t = new Tree(0);
